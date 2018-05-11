@@ -1801,7 +1801,7 @@ void Adafruit_NeoPixel::show(void) {
     [reg] "r" (reg)
   );
 
-#elif defined(__SAM3X8E__) // Arduino Due
+#elif defined(__SAM3X8E__) || defined(__SAMG55J19__) // Arduino Due
 
   #define SCALE      VARIANT_MCK / 2UL / 1000000UL
   #define INST       (2UL * F_CPU / VARIANT_MCK)
@@ -1811,6 +1811,18 @@ void Adafruit_NeoPixel::show(void) {
   #define TIME_400_0 ((int)(0.50 * SCALE + 0.5) - (5 * INST))
   #define TIME_400_1 ((int)(1.20 * SCALE + 0.5) - (5 * INST))
   #define PERIOD_400 ((int)(2.50 * SCALE + 0.5) - (5 * INST))
+
+#if defined(__SAMG55J19__)
+	#define TC_Start tc_start
+	#define TC_Stop tc_stop
+	#define TC_Configure tc_init
+	#define TC_SetRA tc_write_ra
+	#define TC_SetRC tc_write_rc
+	#define TC_ReadCV tc_read_cv
+	#define TC_GetStatus tc_get_status
+	#define TC_SetRB tc_write_rb
+	typedef volatile       uint32_t WoReg;
+#endif
 
   int             pinMask, time0, time1, period, t;
   Pio            *port;
