@@ -1830,17 +1830,17 @@ void Adafruit_NeoPixel::show(void) {
   uint8_t        *p, *end, pix, mask;
 
   pmc_set_writeprotect(false);
-  pmc_enable_periph_clk((uint32_t)TC3_IRQn);
-  TC_Configure(TC1, 0,
+  pmc_enable_periph_clk((uint32_t)TC1_IRQn);
+  TC_Configure(TC0, 1,
     TC_CMR_WAVE | TC_CMR_WAVSEL_UP | TC_CMR_TCCLKS_TIMER_CLOCK1);
-  TC_Start(TC1, 0);
+  TC_Start(TC0, 1);
 
   pinMask   = g_APinDescription[pin].ulPin; // Don't 'optimize' these into
   port      = g_APinDescription[pin].pPort; // declarations above.  Want to
   portSet   = &(port->PIO_SODR);            // burn a few cycles after
   portClear = &(port->PIO_CODR);            // starting timer to minimize
-  timeValue = &(TC1->TC_CHANNEL[0].TC_CV);  // the initial 'while'.
-  timeReset = &(TC1->TC_CHANNEL[0].TC_CCR);
+  timeValue = &(TC0->TC_CHANNEL[1].TC_CV);  // the initial 'while'.
+  timeReset = &(TC0->TC_CHANNEL[1].TC_CCR);
   p         =  pixels;
   end       =  p + numBytes;
   pix       = *p++;
@@ -1874,7 +1874,7 @@ void Adafruit_NeoPixel::show(void) {
     }
   }
   while(*timeValue < period); // Wait for last bit
-  TC_Stop(TC1, 0);
+  TC_Stop(TC0, 1);
 
 #endif // end Due
 
